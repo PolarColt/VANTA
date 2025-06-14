@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Hardcoded values for WebContainer environments like Bolt
-const supabaseUrl = 'https://your-project.supabase.co';
-const supabaseAnonKey = 'your-anon-key';
+const supabaseUrl = 'https://ochwubylbbpathtkwkqe.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9jaHd1YnlsYmJwYXRodGt3a3FlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkzMjE1NzEsImV4cCI6MjA2NDg5NzU3MX0.oK0DtbCeeyZKEmqhmA0EDT7G4Vmj5eZMr7tLBZOWt_E';
 
 // Fallback to environment variables if available
 const finalSupabaseUrl = import.meta.env.VITE_SUPABASE_URL || supabaseUrl;
