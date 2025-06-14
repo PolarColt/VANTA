@@ -11,34 +11,34 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/login');
+    navigate('/'); // Redirect to home or dashboard instead of login
   };
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'Appointments', href: '/appointments', icon: Calendar },
     { name: 'Notifications', href: '/notifications', icon: Bell },
-    ...(profile?.role === 'staff' ? [
-      { name: 'Availability', href: '/availability', icon: Settings },
-      { name: 'Reports', href: '/reports', icon: User },
-    ] : []),
+    ...(profile?.role === 'staff'
+      ? [
+          { name: 'Availability', href: '/availability', icon: Settings },
+          { name: 'Reports', href: '/reports', icon: User },
+        ]
+      : []),
   ];
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Notification />
-      
+
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Calendar className="h-8 w-8 text-blue-600" />
-              <h1 className="ml-2 text-xl font-semibold text-gray-900">
-                AppointmentHub
-              </h1>
+              <h1 className="ml-2 text-xl font-semibold text-gray-900">AppointmentHub</h1>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               {/* Connection Status */}
               {(isDemo || error) && (
@@ -59,22 +59,28 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   </div>
                 </div>
               )}
-              
+
               <div className="flex items-center space-x-2">
                 <User className="h-5 w-5 text-gray-400" />
-                <span className="text-sm text-gray-700">{profile?.full_name}</span>
+{profile ? (
+  <span className="text-sm text-gray-700">{profile.full_name}</span>
+) : (
+  <span className="text-sm text-gray-400 italic">Loading...</span>
+)}
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 capitalize">
                   {profile?.role}
                 </span>
               </div>
-              
-              <button
-                onClick={handleSignOut}
-                className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100 transition-colors"
-              >
-                <LogOut className="h-4 w-4" />
-                <span>Sign Out</span>
-              </button>
+
+              {!isDemo && (
+                <button
+                  onClick={handleSignOut}
+                  className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100 transition-colors"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Sign Out</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -108,9 +114,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </nav>
 
         {/* Main Content */}
-        <main className="flex-1 p-6">
-          {children}
-        </main>
+        <main className="flex-1 p-6">{children}</main>
       </div>
     </div>
   );
