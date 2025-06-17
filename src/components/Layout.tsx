@@ -1,30 +1,33 @@
+// src/components/Layout.tsx
 import React from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Calendar, Bell, User, LogOut, Settings, Home, Wifi, RefreshCw } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Calendar, Bell, User, LogOut, Settings, Home } from 'lucide-react';
 import { Notification } from './Notification';
 
-const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { profile, signOut, isDemo, error, retryConnection } = useAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
+const guestProfile = {
+  full_name: 'Guest User',
+  role: 'staff', // or 'student'
+};
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/'); // Redirect to home or dashboard instead of login
-  };
+const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const location = useLocation();
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'Appointments', href: '/appointments', icon: Calendar },
     { name: 'Notifications', href: '/notifications', icon: Bell },
-    ...(profile?.role === 'staff'
+    ...(guestProfile.role === 'staff'
       ? [
           { name: 'Availability', href: '/availability', icon: Settings },
           { name: 'Reports', href: '/reports', icon: User },
         ]
       : []),
   ];
+
+  const handleSignOut = () => {
+    // Just refresh page or do nothing in demo mode
+    window.location.href = '/';
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -40,54 +43,28 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </div>
 
             <div className="flex items-center space-x-4">
-              {/* Connection Status */}
-              {(isDemo || error) && (
-                <div className="flex items-center space-x-2">
-                  {error && (
-                    <button
-                      onClick={retryConnection}
-                      className="flex items-center space-x-1 text-yellow-600 hover:text-yellow-800 px-2 py-1 rounded-md text-sm hover:bg-yellow-50 transition-colors"
-                      title="Retry connection"
-                    >
-                      <RefreshCw className="h-4 w-4" />
-                      <span className="hidden sm:inline">Retry</span>
-                    </button>
-                  )}
-                  <div className="flex items-center space-x-1 bg-yellow-100 text-yellow-800 px-2 py-1 rounded-md text-sm">
-                    <Wifi className="h-4 w-4" />
-                    <span className="hidden sm:inline">Demo Mode</span>
-                  </div>
-                </div>
-              )}
-
               <div className="flex items-center space-x-2">
                 <User className="h-5 w-5 text-gray-400" />
-{profile ? (
-  <span className="text-sm text-gray-700">{profile.full_name}</span>
-) : (
-  <span className="text-sm text-gray-400 italic">Loading...</span>
-)}
+                <span className="text-sm text-gray-700">{guestProfile.full_name}</span>
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 capitalize">
-                  {profile?.role}
+                  {guestProfile.role}
                 </span>
               </div>
 
-              {!isDemo && (
-                <button
-                  onClick={handleSignOut}
-                  className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100 transition-colors"
-                >
-                  <LogOut className="h-4 w-4" />
-                  <span>Sign Out</span>
-                </button>
-              )}
+              <button
+                onClick={handleSignOut}
+                className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100 transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Sign Out</span>
+              </button>
             </div>
           </div>
         </div>
       </header>
 
       <div className="flex">
-        {/* Sidebar Navigation */}
+        {/* Sidebar */}
         <nav className="w-64 bg-white shadow-sm h-screen sticky top-0">
           <div className="p-4">
             <ul className="space-y-2">
@@ -113,7 +90,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
         </nav>
 
-        {/* Main Content */}
+        {/* Page Content */}
         <main className="flex-1 p-6">{children}</main>
       </div>
     </div>
